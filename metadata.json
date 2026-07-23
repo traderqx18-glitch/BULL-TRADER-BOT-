@@ -1,0 +1,6 @@
+{
+  "name": "Bull Trader LLC Bot",
+  "description": "Bull Trader LLC Bot for Quotex OTC currency pairs with real-time Bull & Bear signals, countdown timers, and Telegram community access.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
