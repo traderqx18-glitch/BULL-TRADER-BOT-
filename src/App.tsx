@@ -30,7 +30,7 @@ export default function App() {
 
   // Core State
   const [selectedPair, setSelectedPair] = useState<CurrencyPair>(ALL_PAIRS[0]); // AUD/CAD OTC
-  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeConfig>(TIMEFRAMES[2]); // 20s default
+  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeConfig>(TIMEFRAMES[0]); // 5s default
   const [currentPrice, setCurrentPrice] = useState<number>(ALL_PAIRS[0].basePrice);
 
   const [activeSignal, setActiveSignal] = useState<SignalData | null>(null);

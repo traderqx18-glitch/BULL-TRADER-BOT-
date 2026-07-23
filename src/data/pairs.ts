@@ -46,8 +46,8 @@ export const ALL_PAIRS: CurrencyPair[] = [
 
 export const TIMEFRAMES: TimeframeConfig[] = [
   { id: '5s', label: '5s', seconds: 5, badge: '5 sec' },
+  { id: '10s', label: '10s', seconds: 10, badge: '10 sec' },
   { id: '15s', label: '15s', seconds: 15, badge: '15 sec' },
-  { id: '20s', label: '20s', seconds: 20, badge: '20 sec' },
   { id: '30s', label: '30s', seconds: 30, badge: '30 sec' },
   { id: '1m', label: '1m', seconds: 60, badge: '1 min' },
   { id: '5m', label: '5m', seconds: 300, badge: '5 min' },

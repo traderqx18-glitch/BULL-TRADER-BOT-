@@ -12,7 +12,7 @@ export interface CurrencyPair {
   volatility: number;
 }
 
-export type TimeframeId = '5s' | '15s' | '20s' | '30s' | '1m' | '5m';
+export type TimeframeId = '5s' | '10s' | '15s' | '30s' | '1m' | '5m';
 
 export interface TimeframeConfig {
   id: TimeframeId;
