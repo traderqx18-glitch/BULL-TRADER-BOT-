@@ -20,11 +20,11 @@ export const SignalCard: React.FC<SignalCardProps> = ({
   onRequestNextSignal,
   lastResult,
 }) => {
-  // Idle / Scanning state
-  if (!signal || status === 'SCANNING') {
+  // Idle / Scanning / Concluded state (When trade ends or no active trade)
+  if (!signal || status === 'SCANNING' || status === 'CONCLUDED' || remainingSeconds <= 0) {
     return (
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center shadow-xl backdrop-blur-md relative overflow-hidden">
-        <div className="py-2">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center shadow-xl backdrop-blur-md relative overflow-hidden space-y-3">
+        <div className="py-1">
           <h3 className="font-extrabold text-slate-100 text-sm sm:text-base">
             {status === 'SCANNING' ? 'Scanning Quotex Market...' : 'Bull Trader LLC Bot Ready'}
           </h3>
@@ -37,12 +37,24 @@ export const SignalCard: React.FC<SignalCardProps> = ({
           <button
             onClick={onRequestNextSignal}
             disabled={status === 'SCANNING'}
-            className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider py-3 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider py-3 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4 fill-slate-950" />
-            {status === 'SCANNING' ? 'Scanning...' : 'Get Signal'}
+            {status === 'SCANNING'
+              ? 'Scanning...'
+              : status === 'CONCLUDED' || lastResult
+              ? 'Get Next Signal'
+              : 'Get Signal'}
           </button>
         </div>
+
+        {/* Display "This trade is finished." below when trade is completed */}
+        {(status === 'CONCLUDED' || lastResult) && (
+          <div className="p-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 flex items-center justify-center gap-2 text-xs font-bold animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+            <span>This trade is finished.</span>
+          </div>
+        )}
       </div>
     );
   }
@@ -137,24 +149,14 @@ export const SignalCard: React.FC<SignalCardProps> = ({
 
       {/* Next Signal Action Button */}
       <div className="pt-1 space-y-1.5">
-        {(!autoNextSignal || remainingSeconds <= 0) && (
-          <button
-            onClick={onRequestNextSignal}
-            disabled={status === 'SCANNING' || remainingSeconds > 0}
-            className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider py-2.5 rounded-xl transition-all shadow-md active:scale-95"
-          >
-            {remainingSeconds > 0 ? `Trade Active (${remainingSeconds}s)` : 'Get Next Signal'}
-          </button>
-        )}
+        <button
+          onClick={onRequestNextSignal}
+          disabled={status === 'SCANNING' || remainingSeconds > 0}
+          className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider py-2.5 rounded-xl transition-all shadow-md active:scale-95"
+        >
+          {remainingSeconds > 0 ? `Trade Active (${remainingSeconds}s)` : 'Get Next Signal'}
+        </button>
       </div>
-
-      {/* Finished Result Notification */}
-      {lastResult && (
-        <div className="mt-2 p-2 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 flex items-center justify-center gap-1.5 text-xs font-bold animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-          <span>The trade is finished.</span>
-        </div>
-      )}
 
     </div>
   );
