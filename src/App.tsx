@@ -43,6 +43,12 @@ export default function App() {
 
   const [lastResult, setLastResult] = useState<{ result: 'WIN' | 'LOSS' | 'REFUND'; profit: number } | null>(null);
   
+  // Ref to always hold current price without causing timer re-renders
+  const currentPriceRef = useRef<number>(currentPrice);
+  useEffect(() => {
+    currentPriceRef.current = currentPrice;
+  }, [currentPrice]);
+
   // Non-negative stats enforcement
   const [stats, setStats] = useState<BotStats>({
     totalSignals: 0,
@@ -77,7 +83,7 @@ export default function App() {
 
     // Simulated market scan loading delay
     setTimeout(() => {
-      const newSig = generateBotSignal(selectedPair, selectedTimeframe, currentPrice, true);
+      const newSig = generateBotSignal(selectedPair, selectedTimeframe, currentPriceRef.current, true);
       setActiveSignal(newSig);
       setRemainingSeconds(selectedTimeframe.seconds);
       setStatus('ACTIVE');
@@ -97,36 +103,11 @@ export default function App() {
     };
   }, [selectedPair]);
 
-  // 2. Countdown Timer & Signal Conclusion Enforcement
-  useEffect(() => {
-    if (status !== 'ACTIVE' || !activeSignal) return;
-
-    timerRef.current = window.setInterval(() => {
-      setRemainingSeconds((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          handleSignalConclusion();
-          return 0;
-        }
-
-        if (prev <= 4) {
-          soundFx.playTick();
-        }
-
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [status, activeSignal, currentPrice]);
-
   // Handle Signal Conclusion & Results Calculation
   const handleSignalConclusion = () => {
     if (!activeSignal) return;
 
-    const res = evaluateSignalResult(activeSignal, currentPrice);
+    const res = evaluateSignalResult(activeSignal, currentPriceRef.current);
     const payout = res === 'WIN' ? (100 * activeSignal.payoutPercent) / 100 : 0;
 
     if (res === 'WIN') {
@@ -164,6 +145,31 @@ export default function App() {
       }, 1500);
     }
   };
+
+  // 2. Countdown Timer & Signal Conclusion Enforcement (Clean 1000ms tick)
+  useEffect(() => {
+    if (status !== 'ACTIVE' || !activeSignal) return;
+
+    timerRef.current = window.setInterval(() => {
+      setRemainingSeconds((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          handleSignalConclusion();
+          return 0;
+        }
+
+        if (prev <= 4) {
+          soundFx.playTick();
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [status, activeSignal]);
 
   const handleToggleSound = () => {
     const next = !soundEnabled;

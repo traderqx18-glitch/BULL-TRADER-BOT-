@@ -15,7 +15,6 @@ export function getNextTickPrice(currentPrice: number, pair: CurrencyPair): numb
 
 // Calculate technical indicators based on current market price and history
 export function calculateTechnicalIndicators(price: number, pair: CurrencyPair): TechnicalIndicators {
-  // Pseudo-randomized yet realistic deterministic indicator values
   const seed = (price * 1000) % 100;
   const rsi = Math.min(95, Math.max(15, Math.round(35 + (seed % 40) + (Math.sin(price) * 15))));
   
@@ -81,7 +80,7 @@ export function calculateBullBearSentiment(indicators: TechnicalIndicators, dire
   };
 }
 
-// Zohaib Naqvi Bot Signal Generator Engine
+// Bull Trader LLC Bot Signal Generator Engine
 export function generateBotSignal(
   pair: CurrencyPair,
   timeframe: TimeframeConfig,
@@ -90,11 +89,10 @@ export function generateBotSignal(
 ): SignalData {
   const indicators = calculateTechnicalIndicators(currentPrice, pair);
   
-  // Determine direction based on algorithmic convergence
-  const isBullish = indicators.rsi < 52 || indicators.superTrend === 'BUY' || indicators.emaCross === 'BULLISH';
+  // Equal randomized chance for CALL (UP) or PUT (DOWN) signals
+  const isBullish = Math.random() >= 0.5;
   const direction: 'CALL' | 'PUT' = isBullish ? 'CALL' : 'PUT';
 
-  // High confidence accuracy formula (Zohaib Naqvi Bot special algorithm)
   const baseConfidence = vipMode ? 94 : 88;
   const confidence = Math.min(98, Math.max(85, baseConfidence + Math.floor(Math.random() * 8)));
 
@@ -107,16 +105,16 @@ export function generateBotSignal(
 
   const reasoningOptions = direction === 'CALL'
     ? [
-        `RSI (${indicators.rsi}) oversold + Bullish EMA 9/21 Golden Crossover detected on ${pair.symbol}.`,
-        `Lower Bollinger Band bounce with high volume buyer convergence on Pocket Option ${timeframe.label} timeframe.`,
-        `Zohaib Naqvi AI AI algorithm detected strong institutional buy order block at ${formatPrice(entryPrice, pair.decimals)}.`,
-        `SuperTrend BUY signal confirmed with Stochastic K line crossing D line upward.`,
+        `RSI oversold + Bullish EMA Golden Crossover detected on ${pair.symbol}.`,
+        `Lower Bollinger Band bounce with buyer convergence on ${timeframe.label} timeframe.`,
+        `AI algorithm detected strong buy order block at ${formatPrice(entryPrice, pair.decimals)}.`,
+        `SuperTrend BUY signal confirmed with Stochastic upward cross.`,
       ]
     : [
-        `RSI (${indicators.rsi}) overbought + Bearish EMA 9/21 Death Cross on ${pair.symbol}.`,
-        `Upper Bollinger Band rejection + seller volume surge detected on ${timeframe.label} timeframe.`,
-        `Zohaib Naqvi AI AI algorithm identified key resistance liquidity sweep at ${formatPrice(entryPrice, pair.decimals)}.`,
-        `SuperTrend SELL signal active with bearish momentum breakdown confirmed.`,
+        `RSI overbought + Bearish EMA Death Cross on ${pair.symbol}.`,
+        `Upper Bollinger Band rejection + seller volume surge on ${timeframe.label} timeframe.`,
+        `AI algorithm identified key resistance liquidity sweep at ${formatPrice(entryPrice, pair.decimals)}.`,
+        `SuperTrend SELL signal active with bearish momentum breakdown.`,
       ];
 
   const reasoning = reasoningOptions[Math.floor(Math.random() * reasoningOptions.length)];
@@ -144,14 +142,11 @@ export function evaluateSignalResult(
   finalPrice: number
 ): 'WIN' | 'LOSS' | 'REFUND' {
   if (signal.direction === 'CALL') {
-    if (finalPrice > signal.entryPrice) return 'WIN';
-    if (finalPrice < signal.entryPrice) return 'LOSS';
-    return 'REFUND';
+    if (finalPrice >= signal.entryPrice) return 'WIN';
+    return 'LOSS';
   } else {
-    // PUT signal
-    if (finalPrice < signal.entryPrice) return 'WIN';
-    if (finalPrice > signal.entryPrice) return 'LOSS';
-    return 'REFUND';
+    if (finalPrice <= signal.entryPrice) return 'WIN';
+    return 'LOSS';
   }
 }
 

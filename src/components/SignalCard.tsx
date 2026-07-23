@@ -94,9 +94,9 @@ export const SignalCard: React.FC<SignalCardProps> = ({
           <div>
             <div className="text-lg font-black tracking-tight uppercase">
               {isCall ? (
-                <span className="text-emerald-400">CALL / UP 🐂</span>
+                <span className="text-emerald-400">CALL / UP</span>
               ) : (
-                <span className="text-rose-400">PUT / DOWN 🐻</span>
+                <span className="text-rose-400">PUT / DOWN</span>
               )}
             </div>
           </div>
